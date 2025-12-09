@@ -1,0 +1,23 @@
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+    <bean id="manager" class="edu.mcw.scge.platform.Main">
+        <property name="version" value="Clinical Trails Indexer v.0.1.0 March, 2024"/>
+        <property name="index" ref="index"/>
+        <property name="admin" ref="indexAdmin"/>
+        <property name="environments">
+            <list>
+                <value>dev</value>
+                <value>test</value>
+                <value>cur</value>
+                <value>prod</value>
+                <value>someName</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="index" class="edu.mcw.scge.platform.index.Index"/>
+    <bean id="indexAdmin" class="edu.mcw.scge.platform.index.IndexAdmin">
+        <property name="index" ref="index"/>
+    </bean>
+
+    <bean id="client" class="edu.mcw.scge.services.ESClient" init-method="init" destroy-method="destroy"/>
+</beans>

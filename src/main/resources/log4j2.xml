@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <!-- Console Appender: Logs to the console -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level: %msg%n%throwable"/>
+        </Console>
+
+        <!-- File Appender: Logs to a file -->
+        <File name="File" fileName="logs/root.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level: %msg%n%throwable"/>
+        </File>
+        <File name="OntologyFile" fileName="logs/ontology.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level: %msg%n%throwable"/>
+        </File>
+
+        <!-- RollingFile Appender: Rolls over based on time -->
+        <RollingFile name="RollingFile" fileName="logs/clinicalTrials.log" filePattern="logs/app-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level: %msg%n%throwable"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <DefaultRolloverStrategy max="30"/>
+            </Policies>
+        </RollingFile>
+
+        <!-- JDBC Appender: Logs to the database -->
+        <JDBC name="DatabaseAppender" tableName="clinical_trial_log_events">
+            <!-- Database connection settings -->
+
+            <DriverManager>
+                    <driverClassName>org.postgresql.Driver</driverClassName>
+                    <connectionString>${env:DB_URL}</connectionString>
+                    <userName>${env:DB_USERNAME}</userName>
+                    <password>${env:DB_PASSWORD}</password>
+                </DriverManager>
+
+            <Column name="timestamp"  isEventTimestamp="true"/>
+            <Column name="level" pattern="%level" isUnicode="false"/>
+            <Column name="logger_name" pattern="%logger" isUnicode="false"/>
+            <Column name="message" pattern="%msg" isUnicode="false"/>
+            <Column name="thread_name" pattern="%thread" isUnicode="false"/>
+            <Column name="exception" pattern="%exception" isUnicode="false"/>
+
+        </JDBC>
+
+    </Appenders>
+
+    <Loggers>
+        <!-- Root Logger: Logs at the 'info' level -->
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Root>
+
+        <!-- Custom Logger for clinicalTrials: Logs at the 'info' level -->
+        <Logger name="clinicalTrials" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+            <AppenderRef ref="DatabaseAppender"/>
+        </Logger>
+        <Logger name="ontology" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="OntologyFile"/>
+
+        </Logger>
+    </Loggers>
+</Configuration>
