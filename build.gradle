@@ -6,7 +6,7 @@ apply plugin: 'application'
 
 version '1.0-SNAPSHOT'
 mainClassName="edu.mcw.scge.platform.Main"
-String myAppName="clinical-trials-pipeline"
+String myAppName="platform-indexer"
 sourceCompatibility = 17
 targetCompatibility = 17
 repositories {

@@ -23,25 +23,25 @@
             </Policies>
         </RollingFile>
 
-        <!-- JDBC Appender: Logs to the database -->
-        <JDBC name="DatabaseAppender" tableName="clinical_trial_log_events">
-            <!-- Database connection settings -->
+<!--        &lt;!&ndash; JDBC Appender: Logs to the database &ndash;&gt;-->
+<!--        <JDBC name="DatabaseAppender" tableName="clinical_trial_log_events">-->
+<!--            &lt;!&ndash; Database connection settings &ndash;&gt;-->
 
-            <DriverManager>
-                    <driverClassName>org.postgresql.Driver</driverClassName>
-                    <connectionString>${env:DB_URL}</connectionString>
-                    <userName>${env:DB_USERNAME}</userName>
-                    <password>${env:DB_PASSWORD}</password>
-                </DriverManager>
+<!--            <DriverManager>-->
+<!--                    <driverClassName>org.postgresql.Driver</driverClassName>-->
+<!--                    <connectionString>${env:DB_URL}</connectionString>-->
+<!--                    <userName>${env:DB_USERNAME}</userName>-->
+<!--                    <password>${env:DB_PASSWORD}</password>-->
+<!--                </DriverManager>-->
 
-            <Column name="timestamp"  isEventTimestamp="true"/>
-            <Column name="level" pattern="%level" isUnicode="false"/>
-            <Column name="logger_name" pattern="%logger" isUnicode="false"/>
-            <Column name="message" pattern="%msg" isUnicode="false"/>
-            <Column name="thread_name" pattern="%thread" isUnicode="false"/>
-            <Column name="exception" pattern="%exception" isUnicode="false"/>
+<!--            <Column name="timestamp"  isEventTimestamp="true"/>-->
+<!--            <Column name="level" pattern="%level" isUnicode="false"/>-->
+<!--            <Column name="logger_name" pattern="%logger" isUnicode="false"/>-->
+<!--            <Column name="message" pattern="%msg" isUnicode="false"/>-->
+<!--            <Column name="thread_name" pattern="%thread" isUnicode="false"/>-->
+<!--            <Column name="exception" pattern="%exception" isUnicode="false"/>-->
 
-        </JDBC>
+<!--        </JDBC>-->
 
     </Appenders>
 
@@ -56,7 +56,7 @@
         <Logger name="clinicalTrials" level="info" additivity="false">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFile"/>
-            <AppenderRef ref="DatabaseAppender"/>
+<!--            <AppenderRef ref="DatabaseAppender"/>-->
         </Logger>
         <Logger name="ontology" level="info" additivity="false">
             <AppenderRef ref="Console"/>
