@@ -91,7 +91,7 @@ task update_core(type:Copy){
     // from file("C:/Users/jthota/Documents/git/scge-core/build/libs/scge-core-1.0.jar")
 
     //  into file("lib/")
-    from file("../scge-platform-core/build/libs/scge-platform-core-1.0.jar")
+    from file("../../scge-platform-core/build/libs/scge-platform-core-1.0.jar")
     into file("lib/")
 
 }
