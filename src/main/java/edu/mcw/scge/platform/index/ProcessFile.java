@@ -30,6 +30,7 @@ import org.json.JSONObject;
 
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,7 +49,7 @@ public class ProcessFile {
                 //.enable(JsonParser.Feature.INCLUDE_SOURCE_IN_LOCATION)
                 .build();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
-
+        mapper.setDateFormat(new SimpleDateFormat("MMM dd, yyyy"));
 
         for(ClinicalTrialRecord trial:trials){
         //   formatRecordValue(trial);
