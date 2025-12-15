@@ -1,0 +1,1 @@
+/data/pipelines/platform-indexer/run.sh reindex test
