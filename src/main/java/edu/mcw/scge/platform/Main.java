@@ -6,7 +6,7 @@ import edu.mcw.scge.platform.index.IndexAdmin;
 import edu.mcw.scge.platform.index.ProcessFile;
 
 
-
+import edu.mcw.scge.platform.utils.BulkIndexProcessor;
 import edu.mcw.scge.process.Utils;
 import edu.mcw.scge.services.ESClient;
 
@@ -54,6 +54,7 @@ public class Main {
         manager.env=args[1];
 //        manager.source=args[2];
         logger.info(manager.version);
+       BulkIndexProcessor.getInstance();
       String index="scgeplatform_search_ct_"+manager.env;
       //  String index= SCGEContext.getESIndexName();
         List<String> indices= new ArrayList<>();

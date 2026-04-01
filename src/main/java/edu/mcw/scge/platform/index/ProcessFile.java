@@ -83,7 +83,7 @@ public class ProcessFile {
             object.setLocations(Arrays.stream(trial.getLocation().split(",")).map(String::trim).collect(Collectors.toSet()));
             object.setCategory("ClinicalTrial");
             addSuggestTerms(object);
-          indexClinicalTrailRecord(object);
+         indexClinicalTrailRecord(object);
         }
     }
     public void addSuggestTerms(ClinicalTrialIndexObject object){
@@ -275,10 +275,7 @@ public class ProcessFile {
     public void indexClinicalTrailRecord(ClinicalTrialIndexObject record) throws IOException {
         JSONObject jsonObject = new JSONObject(record);
         IndexRequest request=   new IndexRequest(Index.getNewAlias()).source(jsonObject.toString(), XContentType.JSON);
-        ESClient.getClient().index(request, RequestOptions.DEFAULT);
-        RefreshRequest refreshRequest = new RefreshRequest();
-        ESClient.getClient().indices().refresh(refreshRequest, RequestOptions.DEFAULT);
-
+        BulkIndexProcessor.bulkProcessor.add(request);
     }
     public void updateClinicalTrailRecord(ClinicalTrialIndexObject record) throws Exception {
 
