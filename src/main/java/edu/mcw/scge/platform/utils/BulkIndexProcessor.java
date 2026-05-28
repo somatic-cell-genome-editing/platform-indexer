@@ -36,13 +36,19 @@ public class BulkIndexProcessor {
             @Override
             public void afterBulk(long executionId, BulkRequest request,
                                   BulkResponse response) {
-                //     System.out.println("in process...");
+                if (response.hasFailures()) {
+                    System.err.println("BULK had item failures executionId=" + executionId
+                            + " actions=" + request.numberOfActions()
+                            + " : " + response.buildFailureMessage());
+                }
             }
 
             @Override
             public void afterBulk(long executionId, BulkRequest request,
                                   Throwable failure) {
-
+                System.err.println("BULK FAILED executionId=" + executionId
+                        + " actions=" + request.numberOfActions() + " : " + failure);
+                failure.printStackTrace();
             }
         };
         return BulkProcessor.builder(

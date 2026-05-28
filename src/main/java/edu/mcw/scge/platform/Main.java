@@ -87,6 +87,7 @@ public class Main {
         if (command.equalsIgnoreCase("reindex"))
            admin.createIndex("clinicalTrialMappings", "");
         fileProcess.indexClinicalTrials();
+        BulkIndexProcessor.getInstance().destroy();
 
         String clusterStatus = this.getClusterHealth(Index.getNewAlias());
         if (!clusterStatus.equalsIgnoreCase("ok")) {
