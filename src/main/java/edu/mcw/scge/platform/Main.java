@@ -12,14 +12,10 @@ import edu.mcw.scge.services.ESClient;
 
 import org.apache.logging.log4j.LogManager;
 
+import co.elastic.clients.elasticsearch.cluster.HealthResponse;
+import co.elastic.clients.elasticsearch.indices.UpdateAliasesRequest;
+import co.elastic.clients.elasticsearch.indices.UpdateAliasesResponse;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
-import org.elasticsearch.action.support.master.AcknowledgedResponse;
-
-
-import org.elasticsearch.client.RequestOptions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -132,48 +128,31 @@ public class Main {
 
     public String getClusterHealth(String index) throws Exception {
 
-        ClusterHealthRequest request = new ClusterHealthRequest(index);
-        ClusterHealthResponse response = ESClient.getClient().cluster().health(request, RequestOptions.DEFAULT);
-        logger.info("CLUSTER STATE: " +response.getStatus().name());
-        //     log.info("CLUSTER STATE: " + response.getStatus().name());
-        if (response.isTimedOut()) {
-            return   "cluster state is " + response.getStatus().name();
+        HealthResponse response = ESClient.getClient().cluster().health(h -> h.index(index));
+        logger.info("CLUSTER STATE: " + response.status().name());
+        if (Boolean.TRUE.equals(response.timedOut())) {
+            return "cluster state is " + response.status().name();
         }
 
         return "OK";
     }
     public boolean switchAlias() throws Exception {
         logger.info("NEW ALIAS: " + Index.getNewAlias() + " || OLD ALIAS:" + Index.getOldAlias());
-        IndicesAliasesRequest request = new IndicesAliasesRequest();
 
-
+        UpdateAliasesRequest request;
         if (Index.getOldAlias() != null) {
-
-            IndicesAliasesRequest.AliasActions removeAliasAction =
-                    new IndicesAliasesRequest.AliasActions(IndicesAliasesRequest.AliasActions.Type.REMOVE)
-                            .index(Index.getOldAlias())
-                            .alias(Index.getIndex());
-            IndicesAliasesRequest.AliasActions addAliasAction =
-                    new IndicesAliasesRequest.AliasActions(IndicesAliasesRequest.AliasActions.Type.ADD)
-                            .index(Index.getNewAlias())
-                            .alias(Index.getIndex());
-            request.addAliasAction(removeAliasAction);
-            request.addAliasAction(addAliasAction);
-            //    log.info("Switched from " + RgdIndex.getOldAlias() + " to  " + RgdIndex.getNewAlias());
-
-        }else{
-            IndicesAliasesRequest.AliasActions addAliasAction =
-                    new IndicesAliasesRequest.AliasActions(IndicesAliasesRequest.AliasActions.Type.ADD)
-                            .index(Index.getNewAlias())
-                            .alias(Index.getIndex());
-            request.addAliasAction(addAliasAction);
-            //    log.info(rgdIndex.getIndex() + " pointed to " + RgdIndex.getNewAlias());
+            request = UpdateAliasesRequest.of(b -> b
+                    .actions(a -> a.remove(r -> r.index(Index.getOldAlias()).alias(Index.getIndex())))
+                    .actions(a -> a.add(ad -> ad.index(Index.getNewAlias()).alias(Index.getIndex())))
+            );
+        } else {
+            request = UpdateAliasesRequest.of(b -> b
+                    .actions(a -> a.add(ad -> ad.index(Index.getNewAlias()).alias(Index.getIndex())))
+            );
         }
-        AcknowledgedResponse indicesAliasesResponse =
-                ESClient.getClient().indices().updateAliases(request, RequestOptions.DEFAULT);
+        UpdateAliasesResponse response = ESClient.getClient().indices().updateAliases(request);
 
-        return  true;
-
+        return response.acknowledged();
     }
 
 

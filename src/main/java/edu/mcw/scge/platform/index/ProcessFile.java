@@ -1,8 +1,6 @@
 package edu.mcw.scge.platform.index;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,17 +13,8 @@ import edu.mcw.scge.datamodel.ClinicalTrialAdditionalInfo;
 import edu.mcw.scge.datamodel.ClinicalTrialExternalLink;
 import edu.mcw.scge.datamodel.ClinicalTrialRecord;
 import edu.mcw.scge.platform.utils.BulkIndexProcessor;
-import edu.mcw.scge.services.ESClient;
 import edu.mcw.scge.services.SCGEContext;
 import org.apache.commons.lang.StringUtils;
-
-
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.RequestOptions;
-
-import org.elasticsearch.xcontent.XContentType;
-import org.json.JSONObject;
 
 
 
@@ -36,8 +25,6 @@ import java.util.stream.Collectors;
 
 public class ProcessFile {
     ClinicalTrailDAO clinicalTrailDAO=new ClinicalTrailDAO();
-
-    ObjectMapper mapper=new ObjectMapper();
     DefinitionDAO definitionDAO=new DefinitionDAO();
 
 
@@ -273,20 +260,17 @@ public class ProcessFile {
         return  Arrays.stream(fieldVal.split(",")).map(str->StringUtils.capitalize(str.toLowerCase().trim().replaceAll("_", " "))).collect(Collectors.joining(", "));
     }
     public void indexClinicalTrailRecord(ClinicalTrialIndexObject record) throws IOException {
-        JSONObject jsonObject = new JSONObject(record);
-        IndexRequest request=   new IndexRequest(Index.getNewAlias()).source(jsonObject.toString(), XContentType.JSON);
-        BulkIndexProcessor.bulkProcessor.add(request);
+        String alias = Index.getNewAlias();
+        BulkIndexProcessor.ingester.add(op -> op.index(idx -> idx.index(alias).document(record)));
     }
     public void updateClinicalTrailRecord(ClinicalTrialIndexObject record) throws Exception {
 
         IndexAdmin indexAdmin=new IndexAdmin();
         indexAdmin.updateIndex(SCGEContext.getESIndexName());
-        if(BulkIndexProcessor.bulkProcessor==null){
+        if(BulkIndexProcessor.ingester==null){
             BulkIndexProcessor.getInstance();
         }
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        String json = mapper.writeValueAsString(record);
-        BulkIndexProcessor.bulkProcessor.add(new IndexRequest(Index.getNewAlias()).source(json, XContentType.JSON));
+        String alias = Index.getNewAlias();
+        BulkIndexProcessor.ingester.add(op -> op.index(idx -> idx.index(alias).document(record)));
     }
 }
