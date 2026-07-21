@@ -2,7 +2,6 @@ package edu.mcw.scge.platform.index;
 
 import edu.mcw.scge.datamodel.ClinicalTrialRecord;
 
-import java.util.Map;
 import java.util.Set;
 
 public class ClinicalTrialIndexObject extends ClinicalTrialRecord {
@@ -25,13 +24,13 @@ public class ClinicalTrialIndexObject extends ClinicalTrialRecord {
     }
 
     private String category;
-    private Map<String, Set<String>> suggest;
+    private Set<String> suggest;
 
-    public Map<String, Set<String>> getSuggest() {
+    public Set<String> getSuggest() {
         return suggest;
     }
 
-    public void setSuggest(Map<String, Set<String>> suggest) {
+    public void setSuggest(Set<String> suggest) {
         this.suggest = suggest;
     }
 

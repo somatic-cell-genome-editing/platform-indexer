@@ -493,7 +493,7 @@
     },
 
     "suggest": {
-      "type": "completion"
+      "type": "search_as_you_type"
     }
   }
 }
