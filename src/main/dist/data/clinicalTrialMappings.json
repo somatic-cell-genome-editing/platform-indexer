@@ -243,6 +243,7 @@
     },
     "indicationDOID": {
       "type": "text",
+      "analyzer": "standard",
       "fields": {
         "keyword": {
           "type": "keyword",
@@ -309,6 +310,7 @@
     },
     "nctId": {
       "type": "text",
+      "analyzer": "standard",
       "fields": {
         "keyword": {
           "type": "keyword",
@@ -318,6 +320,7 @@
     },
     "nihReportLink": {
       "type": "text",
+      "analyzer": "standard",
       "fields": {
         "keyword": {
           "type": "keyword",
@@ -448,6 +451,7 @@
     },
     "targetGeneOrVariant": {
       "type": "text",
+      "analyzer": "standard",
       "fields": {
         "keyword": {
           "type": "keyword",
@@ -493,7 +497,8 @@
     },
 
     "suggest": {
-      "type": "search_as_you_type"
+      "type": "search_as_you_type",
+      "analyzer": "standard"
     }
   }
 }

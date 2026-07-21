@@ -61,12 +61,29 @@ public class IndexAdmin {
         }
         final int finalReplicates = replicates;
 
+        // Default analyzer folds English plurals (minimal_english stemmer) so
+        // singular/plural queries (e.g. "infection" vs "infections") match the
+        // same documents. The suggest field overrides this to keep standard,
+        // unstemmed search-as-you-type behavior.
+        String settingsJson = "{"
+                + "\"number_of_shards\":\"5\","
+                + "\"number_of_replicas\":\"" + finalReplicates + "\","
+                + "\"analysis\":{"
+                + "  \"filter\":{"
+                + "    \"english_stop\":{\"type\":\"stop\",\"stopwords\":\"_english_\"},"
+                + "    \"min_plural\":{\"type\":\"stemmer\",\"language\":\"minimal_english\"}"
+                + "  },"
+                + "  \"analyzer\":{"
+                + "    \"default\":{\"type\":\"custom\",\"tokenizer\":\"standard\","
+                + "      \"filter\":[\"lowercase\",\"english_stop\",\"min_plural\"]}"
+                + "  }"
+                + "}"
+                + "}";
+
         /********* create index, put mappings and analyzers ****/
         CreateIndexRequest request = CreateIndexRequest.of(b -> b
                 .index(index)
-                .settings(IndexSettings.of(s -> s
-                        .numberOfShards("5")
-                        .numberOfReplicas(String.valueOf(finalReplicates))))
+                .settings(IndexSettings.of(s -> s.withJson(new StringReader(settingsJson))))
                 .mappings(TypeMapping.of(tm -> tm.withJson(new StringReader(mappingsJson))))
         );
         CreateIndexResponse createIndexResponse = ESClient.getClient().indices().create(request);
