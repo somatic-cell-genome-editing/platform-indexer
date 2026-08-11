@@ -73,7 +73,7 @@ public class ProcessFile {
             // routeOfAdministration that is tied to curator interface as a string
             if(trial.getRouteOfAdministration()!=null){
                 String[] routes=trial.getRouteOfAdministration().trim().split(",");
-                Set<String> routesOfAdministration= Arrays.stream(routes).map(StringUtils::capitalize).collect(Collectors.toSet());
+                Set<String> routesOfAdministration= Arrays.stream(routes).map(a->StringUtils.capitalize(a.trim())).collect(Collectors.toSet());
                 object.setRoutesOfAdministration(routesOfAdministration);
             }
             //Created new field mechanismOfActions as set of strings
@@ -81,7 +81,7 @@ public class ProcessFile {
             // mechanismOfAction that is tied to curator interface as a string
             if(trial.getMechanismOfAction()!=null){
                 String[] actions=trial.getMechanismOfAction().trim().split(",");
-                Set<String> mechanismOfActions= Arrays.stream(actions).map(StringUtils::capitalize).collect(Collectors.toSet());
+                Set<String> mechanismOfActions= Arrays.stream(actions).map(a->StringUtils.capitalize(a.trim())).collect(Collectors.toSet());
                 object.setMechanismOfActions(mechanismOfActions);
             }
             object.setCategory("ClinicalTrial");
