@@ -68,6 +68,22 @@ public class ProcessFile {
           object.setStatus(Arrays.stream(trial.getStudyStatus().split(",")).map(String::trim).collect(Collectors.toSet()));
             if(trial.getLocation()!=null)
             object.setLocations(Arrays.stream(trial.getLocation().split(",")).map(String::trim).collect(Collectors.toSet()));
+            //Created new field routesOfAdministration as set of strings
+            // for better filtering in addition to
+            // routeOfAdministration that is tied to curator interface as a string
+            if(trial.getRouteOfAdministration()!=null){
+                String[] routes=trial.getRouteOfAdministration().trim().split(",");
+                Set<String> routesOfAdministration= Arrays.stream(routes).map(StringUtils::capitalize).collect(Collectors.toSet());
+                object.setRoutesOfAdministration(routesOfAdministration);
+            }
+            //Created new field mechanismOfActions as set of strings
+            // for better filtering in addition to
+            // mechanismOfAction that is tied to curator interface as a string
+            if(trial.getMechanismOfAction()!=null){
+                String[] actions=trial.getMechanismOfAction().trim().split(",");
+                Set<String> mechanismOfActions= Arrays.stream(actions).map(StringUtils::capitalize).collect(Collectors.toSet());
+                object.setMechanismOfActions(mechanismOfActions);
+            }
             object.setCategory("ClinicalTrial");
             addSuggestTerms(object);
          indexClinicalTrailRecord(object);

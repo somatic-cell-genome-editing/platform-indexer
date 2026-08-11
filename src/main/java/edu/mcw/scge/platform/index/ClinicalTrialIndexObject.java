@@ -14,6 +14,24 @@ public class ClinicalTrialIndexObject extends ClinicalTrialRecord {
     private Set<String> fdaDesignations;
     private Set<String> tags;
     private Set<String> indications;
+    private Set<String> routesOfAdministration;
+    private Set<String> mechanismOfActions;
+
+    public Set<String> getMechanismOfActions() {
+        return mechanismOfActions;
+    }
+
+    public void setMechanismOfActions(Set<String> mechanismOfActions) {
+        this.mechanismOfActions = mechanismOfActions;
+    }
+
+    public Set<String> getRoutesOfAdministration() {
+        return routesOfAdministration;
+    }
+
+    public void setRoutesOfAdministration(Set<String> routesOfAdministration) {
+        this.routesOfAdministration = routesOfAdministration;
+    }
 
     public Set<String> getIndications() {
         return indications;
