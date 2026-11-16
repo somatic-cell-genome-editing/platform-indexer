@@ -1,10 +1,34 @@
 package edu.mcw.scge.platform.index;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import edu.mcw.scge.datamodel.ClinicalTrialRecord;
 
+import java.util.List;
 import java.util.Set;
 
 public class ClinicalTrialIndexObject extends ClinicalTrialRecord {
+
+    /**
+     * The dense vector for this trial, matching the dense_vector field of the same name in
+     * clinicalTrialMappings.json. Null when embedding is switched off or the call failed;
+     * such a record is still indexed and still found by the keyword query, it is simply not
+     * reachable by the kNN clause.
+     *
+     * NON_NULL matters here. The document is serialized by the Elasticsearch client's
+     * Jackson mapper, which writes null fields out as JSON null by default, and a literal
+     * "embedding": null is not something a dense_vector field should be asked to accept.
+     * Omitting the key instead is unambiguous.
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<Float> embedding;
+
+    public List<Float> getEmbedding() {
+        return embedding;
+    }
+
+    public void setEmbedding(List<Float> embedding) {
+        this.embedding = embedding;
+    }
 
     private Set<String> phases;
     private Set<String> status;

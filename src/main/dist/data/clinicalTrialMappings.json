@@ -171,6 +171,15 @@
         }
       }
     },
+    "embedding": {
+      "type": "dense_vector",
+      "dims": 1024,
+      "index": true,
+      "similarity": "cosine",
+      "index_options": {
+        "type": "int8_hnsw"
+      }
+    },
     "enrorllmentCount": {
       "type": "long"
     },

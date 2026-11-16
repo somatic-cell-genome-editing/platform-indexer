@@ -12,6 +12,8 @@ import edu.mcw.scge.datamodel.Alias;
 import edu.mcw.scge.datamodel.ClinicalTrialAdditionalInfo;
 import edu.mcw.scge.datamodel.ClinicalTrialExternalLink;
 import edu.mcw.scge.datamodel.ClinicalTrialRecord;
+import edu.mcw.scge.platform.embedding.EmbeddingService;
+import edu.mcw.scge.platform.embedding.TrialEmbeddingText;
 import edu.mcw.scge.platform.utils.BulkIndexProcessor;
 import edu.mcw.scge.services.SCGEContext;
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 public class ProcessFile {
     ClinicalTrailDAO clinicalTrailDAO=new ClinicalTrailDAO();
     DefinitionDAO definitionDAO=new DefinitionDAO();
+    EmbeddingService embeddingService=new EmbeddingService();
 
 
     public void indexClinicalTrials() throws Exception {
@@ -86,8 +89,12 @@ public class ProcessFile {
             }
             object.setCategory("ClinicalTrial");
             addSuggestTerms(object);
+            // Embed last, so the vector covers the record as it is actually indexed -
+            // aliases, indications, routes and mechanisms are all set by this point.
+            object.setEmbedding(embeddingService.embed(TrialEmbeddingText.build(object)));
          indexClinicalTrailRecord(object);
         }
+        embeddingService.logSummary();
     }
     public void addSuggestTerms(ClinicalTrialIndexObject object){
         Set<String> suggestTerms=new HashSet<>();
