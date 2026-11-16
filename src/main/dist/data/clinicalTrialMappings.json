@@ -180,6 +180,10 @@
         "type": "int8_hnsw"
       }
     },
+    "embeddingText": {
+      "type": "text",
+      "index": false
+    },
     "enrorllmentCount": {
       "type": "long"
     },

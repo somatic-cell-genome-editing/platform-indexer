@@ -22,12 +22,37 @@ public class ClinicalTrialIndexObject extends ClinicalTrialRecord {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Float> embedding;
 
+    /**
+     * The exact text that was fed to the embedding model to produce {@link #embedding}.
+     *
+     * Stored so that a vector can be explained after the fact - when a trial turns up for
+     * a query it should not have matched, or fails to turn up for one it should, the first
+     * question is what the model actually saw, and recomputing it later is guesswork once
+     * TrialEmbeddingText changes.
+     *
+     * Mapped with "index": false. It restates content already carried by briefTitle,
+     * description, indications and the rest, and buildQuery() in the web module issues
+     * multi_match without naming fields - which searches every indexed field - so making
+     * this one searchable would double-count that content and quietly skew keyword
+     * relevance. It lives in _source for inspection only.
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String embeddingText;
+
     public List<Float> getEmbedding() {
         return embedding;
     }
 
     public void setEmbedding(List<Float> embedding) {
         this.embedding = embedding;
+    }
+
+    public String getEmbeddingText() {
+        return embeddingText;
+    }
+
+    public void setEmbeddingText(String embeddingText) {
+        this.embeddingText = embeddingText;
     }
 
     private Set<String> phases;

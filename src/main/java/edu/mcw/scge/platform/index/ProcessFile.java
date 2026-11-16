@@ -90,8 +90,11 @@ public class ProcessFile {
             object.setCategory("ClinicalTrial");
             addSuggestTerms(object);
             // Embed last, so the vector covers the record as it is actually indexed -
-            // aliases, indications, routes and mechanisms are all set by this point.
-            object.setEmbedding(embeddingService.embed(TrialEmbeddingText.build(object)));
+            // aliases, indications, routes and mechanisms are all set by this point. The
+            // text is stored alongside the vector so the result can be explained later.
+            String embeddingText = TrialEmbeddingText.build(object);
+            object.setEmbeddingText(embeddingText);
+            object.setEmbedding(embeddingService.embed(embeddingText));
          indexClinicalTrailRecord(object);
         }
         embeddingService.logSummary();
