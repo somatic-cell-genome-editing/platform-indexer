@@ -6,6 +6,7 @@ import edu.mcw.scge.platform.index.IndexAdmin;
 import edu.mcw.scge.platform.index.ProcessFile;
 
 
+import edu.mcw.scge.platform.index.ProcessRegulatoryDocuments;
 import edu.mcw.scge.platform.utils.BulkIndexProcessor;
 import edu.mcw.scge.process.Utils;
 import edu.mcw.scge.services.ESClient;
@@ -16,19 +17,17 @@ import co.elastic.clients.elasticsearch.cluster.HealthResponse;
 import co.elastic.clients.elasticsearch.indices.UpdateAliasesRequest;
 import co.elastic.clients.elasticsearch.indices.UpdateAliasesResponse;
 import org.apache.logging.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
+
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.RestClient;
+
 
 
 import java.io.IOException;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 public class Main {
     private String version;
@@ -38,8 +37,10 @@ public class Main {
     String env;
 //    String source;
 //    IndexAdmin indexer=new IndexAdmin();
-    private static List environments;
+    private static List<String> environments;
     ProcessFile fileProcess=new ProcessFile();
+    /** Overridden from AppConfigure.xml to point at the shared document folder. */
+    private ProcessRegulatoryDocuments regulatoryDocuments=new ProcessRegulatoryDocuments();
     protected static Logger logger= LogManager.getLogger();
     public static void main(String[] args) throws IOException {
 
@@ -80,9 +81,26 @@ public class Main {
     public void run() throws Exception {
         long start = System.currentTimeMillis();
 
-        if (command.equalsIgnoreCase("reindex"))
-           admin.createIndex("clinicalTrialMappings", "");
-        fileProcess.indexClinicalTrials();
+        switch (command.toLowerCase()) {
+            case "reindex":
+                /**** rebuild the whole search index from every source ****/
+                admin.createIndex("clinicalTrialMappings", "");
+                fileProcess.indexClinicalTrials();
+                regulatoryDocuments.indexRegulatoryDocuments();
+                break;
+            case "regulatorydocuments":
+                /**** refresh just the regulatory documents in the live index;
+                      the clinical trials already in it are left untouched and
+                      the alias stays where it is ****/
+                admin.updateIndex(Index.getIndex());
+                regulatoryDocuments.indexRegulatoryDocuments();
+                break;
+            default:
+                logger.info("UNKNOWN COMMAND '" + command
+                        + "', expected 'reindex' or 'regulatoryDocuments'");
+                BulkIndexProcessor.getInstance().destroy();
+                return;
+        }
         BulkIndexProcessor.getInstance().destroy();
 
         String clusterStatus = this.getClusterHealth(Index.getNewAlias());
@@ -124,7 +142,15 @@ public class Main {
     public void setIndex(Index index) {
         this.index = index;
     }
-    
+
+    public ProcessRegulatoryDocuments getRegulatoryDocuments() {
+        return regulatoryDocuments;
+    }
+
+    public void setRegulatoryDocuments(ProcessRegulatoryDocuments regulatoryDocuments) {
+        this.regulatoryDocuments = regulatoryDocuments;
+    }
+
 
     public String getClusterHealth(String index) throws Exception {
 

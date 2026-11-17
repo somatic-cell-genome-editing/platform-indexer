@@ -19,7 +19,7 @@ public class IndexAdmin {
 
     public void createIndex(String mappings, String type) throws Exception {
         ElasticsearchClient client = ESClient.getClient();
-        String aliasName = index.getIndex();
+        String aliasName = Index.getIndex();
         boolean existsAlias = client.indices().existsAlias(b -> b.name(aliasName)).value();
         if (existsAlias) {
             for (String idx : Index.getIndices()) {

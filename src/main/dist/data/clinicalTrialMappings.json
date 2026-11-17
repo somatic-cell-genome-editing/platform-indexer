@@ -36,6 +36,19 @@
         }
       }
     },
+    "content": {
+      "type": "text"
+    },
+    "contentType": {
+      "type": "text",
+      "analyzer": "standard",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
     "compoundDescription": {
       "type": "text",
       "fields": {
@@ -73,6 +86,24 @@
       }
     },
     "developmentStatus": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "documentName": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "documentType": {
       "type": "text",
       "fields": {
         "keyword": {
@@ -125,6 +156,10 @@
           "ignore_above": 256
         }
       }
+    },
+    "downloadUrl": {
+      "type": "keyword",
+      "index": false
     },
     "drugProductType": {
       "type": "text",
@@ -229,6 +264,9 @@
         }
       }
     },
+    "fileSize": {
+      "type": "long"
+    },
     "firstSubmitDate": {
       "type": "date"
     },
@@ -277,6 +315,9 @@
           "ignore_above": 256
         }
       }
+    },
+    "lastModifiedDate": {
+      "type": "date"
     },
     "lastUpdatePostDate": {
       "type": "date"
@@ -340,6 +381,9 @@
         }
       }
     },
+    "pageCount": {
+      "type": "long"
+    },
     "patents": {
       "type": "text",
       "fields": {
@@ -367,6 +411,16 @@
         }
       }
     },
+    "program": {
+      "type": "text",
+      "analyzer": "standard",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
     "recentUpdates": {
       "type": "text",
       "fields": {
@@ -375,6 +429,13 @@
           "ignore_above": 256
         }
       }
+    },
+    "redacted": {
+      "type": "boolean"
+    },
+    "relativePath": {
+      "type": "keyword",
+      "ignore_above": 1024
     },
     "routeOfAdministration": {
       "type": "text",
@@ -478,6 +539,15 @@
       }
     },
     "therapyType": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "title": {
       "type": "text",
       "fields": {
         "keyword": {

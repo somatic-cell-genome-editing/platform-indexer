@@ -4,6 +4,7 @@
         <property name="version" value="Clinical Trails Indexer v.0.1.0 March, 2024"/>
         <property name="index" ref="index"/>
         <property name="admin" ref="indexAdmin"/>
+        <property name="regulatoryDocuments" ref="regulatoryDocuments"/>
         <property name="environments">
             <list>
                 <value>dev</value>
@@ -17,6 +18,12 @@
     <bean id="index" class="edu.mcw.scge.platform.index.Index"/>
     <bean id="indexAdmin" class="edu.mcw.scge.platform.index.IndexAdmin">
         <property name="index" ref="index"/>
+    </bean>
+
+    <bean id="regulatoryDocuments" class="edu.mcw.scge.platform.index.ProcessRegulatoryDocuments">
+        <property name="documentDir" value="/data/download/regulatory/documents/"/>
+        <property name="maxContentChars" value="900000"/>
+        <property name="downloadUrlPattern" value="/platform/public/download/regulatory?documentName=%s"/>
     </bean>
 
     <bean id="client" class="edu.mcw.scge.services.ESClient" init-method="init" destroy-method="destroy"/>

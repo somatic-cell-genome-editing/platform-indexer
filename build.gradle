@@ -17,13 +17,11 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
     implementation fileTree(dir: 'lib', include: '*.jar')
-    // https://mvnrepository.com/artifact/org.springframework/spring-web
     implementation("org.springframework:spring-web:6.2.14")
     implementation('org.springframework:spring-core:6.2.11')
     implementation("org.springframework:spring-beans:6.2.14")
     implementation("org.springframework:spring-jdbc:6.2.14")
 
-//    implementation group: 'org.springframework', name: 'spring-web', version: '5.1.9.RELEASE'
     implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.4-alpha2'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
     implementation group: 'org.json', name: 'json', version: '20240303'
@@ -50,14 +48,21 @@ dependencies {
     implementation group: 'org.jsonschema2pojo', name: 'jsonschema2pojo-core', version: '1.2.1'
 
     implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.1'
-    implementation group: 'uk.ac.gate', name: 'gate-core', version: '9.0.1'
+    // GATE drags in tika-parsers 1.25, whose parser classes shadow the Tika 3
+    // ones below and fail at parse time with NoSuchMethodError on tika-core.
+    implementation(group: 'uk.ac.gate', name: 'gate-core', version: '9.0.1') {
+        exclude group: 'org.apache.tika'
+    }
     compileOnly group: 'uk.ac.gate.plugins', name: 'annie', version: '9.1'
     implementation group: 'org.codehaus.plexus', name: 'plexus-utils', version: '4.0.1'
 
     implementation group: 'com.github.rholder', name: 'snowball-stemmer', version: '1.3.0.581.1'
 
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.17.2'
-    implementation group: 'org.apache.tika', name: 'tika', version: '2.9.2', ext: 'pom'
+    // Text extraction for the regulatory documents; the standard package pulls
+    // in the PDF/Office parsers that tika-core on its own does not carry.
+    implementation group: 'org.apache.tika', name: 'tika-core', version: '3.0.0'
+    implementation group: 'org.apache.tika', name: 'tika-parsers-standard-package', version: '3.0.0'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
 
     implementation 'javax.annotation:javax.annotation-api:1.3.2'
@@ -82,9 +87,6 @@ distributions {
 }
 
 task update_core(type:Copy){
-    // from file("C:/Users/jthota/Documents/git/scge-core/build/libs/scge-core-1.0.jar")
-
-    //  into file("lib/")
     from file("../../scge-platform-core/build/libs/scge-platform-core-1.0.jar")
     into file("lib/")
 
